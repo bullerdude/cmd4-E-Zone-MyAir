@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # IP Address / Port:
-ip="192.168.x.x:2025" 
+ip="192.168.10.102:2025" 
 
 if [ "$1" = "Get" ]; then
   case "$3" in
@@ -91,12 +91,43 @@ if [ "$1" = "Get" ]; then
 	  ;;
 
 	  * )
-	    # If anything unexpected is retruned than the above, set to Off.
+	    # If anything unexpected is returned than the above, set to Off.
             echo 0
 	  ;;
         esac
       fi
     ;;
+
+    # Fan Accessory v2
+
+    Active )
+      # Return value of Off if the zone is closed or the Control Unit is Off.
+      if [ "$(curl -s http://$ip/getSystemData | jq '.aircons.ac1.info.state')" = '"off"' ]; then
+        echo 0
+
+      else
+         # Return the value of On is the system is On so that we can control the fan speed.
+         echo 1
+
+      fi
+    ;;
+
+    RotationSpeed )
+      if [ "$(curl -s http://$ip/getSystemData | jq '.aircons.ac1.info.fan')" = '"low"' ]; then 
+        echo 33
+
+      elif [ "$(curl -s http://$ip/getSystemData | jq '.aircons.ac1.info.fan')" = '"medium"' ]; then
+        echo 66
+
+      elif [ "$(curl -s http://$ip/getSystemData | jq '.aircons.ac1.info.fan')" = '"high"' ]; then
+        echo 99
+
+      else
+        echo 100
+
+      fi
+    ;;
+
     esac
 fi
 
@@ -136,6 +167,26 @@ if [ "$1" = "Set" ]; then
         curl -g http://$ip/setAircon?json={"ac1":{"info":{"state":"off"}}}
      fi
     ;;
+
+    RotationSpeed )
+      if [ "$4" -ge "1" ] && [ "$4" -le "33" ]; then
+        #Sets the fan rotation speed to low
+        curl -g http://$ip/setAircon?json={"ac1":{"info":{"fan":"low"}}}
+
+      elif [ "$4" -ge "34" ] && [ "$4" -le "66" ]; then
+        #Sets the fan rotation speed to medium
+        curl -g http://$ip/setAircon?json={"ac1":{"info":{"fan":"medium"}}}
+
+      elif [ "$4" -ge "67" ] && [ "$4" -le "99" ]; then
+        #Sets the fan rotation speed to high
+        curl -g http://$ip/setAircon?json={"ac1":{"info":{"fan":"high"}}}
+
+      else
+        #Sets the fan rotation speed to ezauto
+        curl -g http://$ip/setAircon?json={"ac1":{"info":{"fan":"autoAA"}}}
+      fi
+    ;;
+
   esac
 fi
 
