@@ -1,6 +1,10 @@
 {
     "platform": "Cmd4",
     "name": "Cmd4",
+    "outputConstants": false,
+    "restartRecover": false,
+    "Cmd4_Mode": "Polled",
+    "debug": false,
     "accessories": [
         {
             "type": "Thermostat",
@@ -10,7 +14,7 @@
             "currentTemperature": 21,
             "targetTemperature": 21,
             "temperatureDisplayUnits": "CELCIUS",
-            "name": "E-Zone",
+            "Name": "E-Zone",
             "Manufacturer": "Advantage Air Australia",
             "Model": "e-zone",
             "SerialNumber": "Daiken",
@@ -37,16 +41,25 @@
         {
             "type": "Fan",
             "on": "FALSE",
+            "displayName": "FanOnly",
             "name": "FanOnly",
             "Manufacturer": "Advantage Air Australia",
             "Model": "e-zone",
             "SerialNumber": "Daiken",
             "stateChangeResponseTime": 1,
-            "state_cmd": "bash /homebridge/cmd4scripts/ezone.sh"
+            "state_cmd": "bash /homebridge/cmd4scripts/ezone.sh",
+            "polling": [
+                {
+                    "characteristic": "on",
+                    "interval": 60,
+                    "timeout": 8000
+                }
+            ]
         },
         {
             "type": "Fanv2",
             "DisplayName": "FanSpeed",
+            "name": "FanSpeed",
             "Active": "INACTIVE",
             "RotationSpeed": 100,
             "polling": [
@@ -66,27 +79,41 @@
         },
         {
             "type": "Switch",
-            "displayName": "My_Switch",
+            "displayName": "Upstairs",
             "on": "FALSE",
             "name": "Upstairs",
             "Manufacturer": "Advantage Air Australia",
             "Model": "e-zone",
             "SerialNumber": "Daiken",
-            "stateChangeResponseTime": 1,
+            "stateChangeResponseTime": 5,
             "state_cmd": "bash /homebridge/cmd4scripts/zones.sh",
-            "state_cmd_suffix": "z01"
+            "state_cmd_suffix": "z01",
+            "polling": [
+                {
+                    "characteristic": "on",
+                    "interval": 60,
+                    "timeout": 8000
+                }
+            ]
         },
         {
             "type": "Switch",
-            "displayName": "My_Switch",
+            "displayName": "Master/Study",
             "on": "FALSE",
             "name": "Master/Study",
             "Manufacturer": "Advantage Air Australia",
             "Model": "e-zone",
             "SerialNumber": "Daiken",
-            "stateChangeResponseTime": 1,
+            "stateChangeResponseTime": 5,
             "state_cmd": "bash /homebridge/cmd4scripts/zones.sh",
-            "state_cmd_suffix": "z02"
+            "state_cmd_suffix": "z02",
+            "polling": [
+                {
+                    "characteristic": "on",
+                    "interval": 60,
+                    "timeout": 8000
+                }
+            ]
         }
     ]
 }
